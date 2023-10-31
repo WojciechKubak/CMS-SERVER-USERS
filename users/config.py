@@ -7,6 +7,7 @@ import os
 class BaseConfig:
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'mysql://user:user1234@mysql:3307/db_1'
+    SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 
 
 @dataclass
