@@ -51,6 +51,9 @@ class UserService:
             raise ValueError(self.USER_NOT_FOUND_ERROR_MSG)
         return user
 
+    def get_all_users(self) -> list[UserModel]:
+        return UserModel.query.all()
+
     def register_user(self, data: dict[str, Any]) -> UserModel:
         if UserModel.find_by_username(data['username']) or UserModel.find_by_email(data['email']):
             raise ValueError('User already exists')

@@ -1,4 +1,4 @@
-from users.routes.user import UserResource, UserRegisterResource
+from users.routes.user import UserResource, UserListResource, UserRegisterResource
 from users.web.configuration import app
 from users.db.configuration import sa
 from users.config import get_config
@@ -16,7 +16,6 @@ def create_app() -> Flask:
     with app.app_context():
 
         app.config.from_object(env_config)
-
         sa.init_app(app)
 
         app.wsgi_app = ProxyFix(
@@ -24,7 +23,7 @@ def create_app() -> Flask:
         )
 
         api = Api(app)
-
+        api.add_resource(UserListResource, '/users')
         api.add_resource(UserResource, '/users/<string:username>')
         api.add_resource(UserRegisterResource, '/register')
 

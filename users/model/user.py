@@ -11,7 +11,7 @@ UserRole = Literal['user', 'redactor', 'translator', 'admin']
 class UserModel(sa.Model):
     __tablename__ = 'users'
 
-    id: Mapped[int] = mapped_column(Integer(), primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String(20))
     email: Mapped[str] = mapped_column(String)
     password: Mapped[str] = mapped_column(String)

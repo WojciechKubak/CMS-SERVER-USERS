@@ -40,6 +40,13 @@ class UserResource(Resource):
             return make_response({'message': e.args[0]}, 400)
 
 
+class UserListResource(Resource):
+
+    def get(self) -> Response:
+        users = UserService().get_all_users()
+        return make_response({'users': [user.to_json() for user in users]}, 200)
+
+
 class UserRegisterResource(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('username', type=str)
