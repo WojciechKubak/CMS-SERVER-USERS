@@ -1,7 +1,8 @@
 from users.service.user import UserService
 from users.security.token_required import jwt_required_with_roles
 from flask_restful import Resource, reqparse
-from flask import make_response, Response
+from flask import make_response, request, Response
+from datetime import datetime
 
 
 class UserResource(Resource):
@@ -64,5 +65,20 @@ class UserRegisterResource(Resource):
         try:
             user = UserService().register_user(data)
             return make_response(user.to_json(), 201)
+        except ValueError as e:
+            return make_response({'message': e.args[0]}, 400)
+
+
+class UserActivationResource(Resource):
+
+    def get(self) -> Response:
+        timestamp = float(request.args.get('timestamp'))
+        if timestamp < datetime.utcnow().timestamp() * 1000:
+            return make_response({'message': 'Activation link expired'}, 400)
+        try:
+            user_service = UserService()
+            user = user_service.get_user_by_name(request.args.get('username'))
+            user_service.activate_user(user.username)
+            return make_response({'message': 'User activated'}, 200)
         except ValueError as e:
             return make_response({'message': e.args[0]}, 400)

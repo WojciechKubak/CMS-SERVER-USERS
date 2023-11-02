@@ -1,5 +1,6 @@
 from users.model.user import UserModel
 from users.security.configuration import bcrypt
+from users.email.configuration import MailConfig
 from dataclasses import dataclass
 from typing import Any, ClassVar
 
@@ -42,6 +43,8 @@ class UserService:
             raise ValueError(self.USER_NOT_FOUND_ERROR_MSG)
         if not user.check_password(password):
             raise ValueError('Incorrect password provided')
+        if not user.is_active:
+            raise ValueError('User is not activated')
         return user
 
     def get_user_by_name(self, username: str) -> UserModel:
@@ -58,4 +61,5 @@ class UserService:
         hashed_password = bcrypt.generate_password_hash(data.pop('password'))
         user = UserModel(**data, password=hashed_password)
         user.add()
+        MailConfig.send_activation_mail(user.username, user.email)
         return user

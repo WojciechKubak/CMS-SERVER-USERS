@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c3afed092de856b6ee6e65ae9c8c2567acdfaf825f4e9eacd865eee636b8603a"
+            "sha256": "6fc41facb4bfc534c481046d28c017a53b9e1062ed250c80e07057d70035702a"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -109,6 +109,13 @@
             "markers": "python_version >= '3.7' and python_version < '4'",
             "version": "==4.5.3"
         },
+        "flask-mail": {
+            "hashes": [
+                "sha256:22e5eb9a940bf407bcf30410ecc3708f3c56cc44b29c34e1726fe85006935f41"
+            ],
+            "index": "pypi",
+            "version": "==0.9.1"
+        },
         "flask-restful": {
             "hashes": [
                 "sha256:1cf93c535172f112e080b0d4503a8d15f93a48c88bdd36dd87269bdaf405051b",
@@ -211,6 +218,7 @@
                 "sha256:31351a702a408a9e7595a8fc6150fc3f43bb6bf7e319770cbc0db9df9437e852",
                 "sha256:6088930bfe239f0e6710546ab9c19c9ef35e29792895fed6e6e31a023a182a61"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.7'",
             "version": "==3.1.2"
         },

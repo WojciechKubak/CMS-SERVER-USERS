@@ -1,5 +1,6 @@
-from users.routes.user import UserResource, UserListResource, UserRegisterResource
+from users.routes.user import UserResource, UserListResource, UserRegisterResource, UserActivationResource
 from users.security.configure_security import configure_security
+from users.email.configuration import MailConfig
 from users.web.configuration import app
 from users.db.configuration import sa
 from users.config import get_config
@@ -8,6 +9,7 @@ from flask import Flask, Response, make_response
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 
+from jinja2 import PackageLoader, Environment
 from werkzeug.middleware.proxy_fix import ProxyFix
 from dotenv import load_dotenv
 import logging
@@ -42,9 +44,22 @@ def create_app() -> Flask:
         manager = JWTManager(app)
         configure_security(app)
 
+        mail_settings = {
+            'MAIL_SERVER': os.environ.get('MAIL_SERVER'),
+            'MAIL_PORT': int(os.environ.get('MAIL_PORT')),
+            'MAIL_USE_SSL': ast.literal_eval(os.environ.get('MAIL_USE_SSL')),
+            'MAIL_USE_TLS': ast.literal_eval(os.environ.get('MAIL_USE_TLS')),
+            'MAIL_USERNAME': os.environ.get('MAIL_USERNAME'),
+            'MAIL_PASSWORD': os.environ.get('MAIL_PASSWORD')
+        }
+        app.config.update(mail_settings)
+        templates_env = Environment(loader=PackageLoader('users', 'templates'))
+        MailConfig.prepare_mail(app, templates_env)
+
         api = Api(app)
         api.add_resource(UserListResource, '/users')
         api.add_resource(UserResource, '/users/<string:username>')
+        api.add_resource(UserActivationResource, '/users/activate')
         api.add_resource(UserRegisterResource, '/register')
 
         @app.route('/')
