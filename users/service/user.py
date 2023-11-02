@@ -42,8 +42,6 @@ class UserService:
             raise ValueError(self.USER_NOT_FOUND_ERROR_MSG)
         if not user.check_password(password):
             raise ValueError('Incorrect password provided')
-        if not user.is_active:
-            raise ValueError('User is not activated')
         return user
 
     def get_user_by_name(self, username: str) -> UserModel:
