@@ -1,4 +1,4 @@
-from users.service.user import UserService
+from users.service.configuration import user_service
 from flask import Flask, Response, request, make_response
 from flask_jwt_extended import (
     create_access_token,
@@ -20,7 +20,7 @@ def configure_security(app: Flask) -> None:
             if not username or not password:
                 return make_response({'message': 'No credentials provided'}, 400)
 
-            user = UserService().check_login_credentials(username, password)
+            user = user_service.check_login_credentials(username, password)
 
             access_token = create_access_token(identity=user.id, additional_claims={'role': user.role})
             refresh_token = create_refresh_token(identity=user.id, additional_claims={'role': user.role})

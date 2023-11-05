@@ -7,8 +7,7 @@ from users.routes.user import (
 from users.security.configure_security import configure_security
 from users.email.configuration import MailConfig
 from users.web.configuration import app
-from users.db.configuration import sa
-from users.config import get_config
+from users.config import call_configuration
 
 from flask import Flask, Response, make_response
 from flask_jwt_extended import JWTManager
@@ -26,7 +25,7 @@ def create_app() -> Flask:
 
     logging.basicConfig(level=logging.INFO)
     load_dotenv()
-    config = get_config()
+    config = call_configuration()
 
     with app.app_context():
 
@@ -35,7 +34,6 @@ def create_app() -> Flask:
         )
 
         app.config.from_object(config)
-        sa.init_app(app)
 
         setup_security_envs(app)
         manager = JWTManager(app)

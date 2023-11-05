@@ -1,65 +1,84 @@
-from users.model.user import UserModel
-from users.security.configuration import bcrypt
+from users.db.configuration import UserRepository
 from users.email.configuration import MailConfig
+from users.security.configuration import bcrypt
+from users.db.entity import UserEntity
 from dataclasses import dataclass
-from typing import Any, ClassVar
+from typing import Any
 
 
 @dataclass
 class UserService:
-    USER_NOT_FOUND_ERROR_MSG: ClassVar[str] = 'User not found'
+    user_repository: UserRepository
 
-    def add_user(self, data: dict[str, Any]) -> UserModel:
-        if UserModel.find_by_username(data['username']) or UserModel.find_by_email(data['email']):
-            raise ValueError('User already exists')
-        hashed_password = bcrypt.generate_password_hash(data.pop('password'))
-        user = UserModel(**data, password=hashed_password)
-        user.add()
-        return user
+    def add_user(self, data: dict[str, Any]) -> UserEntity:
+        if self.user_repository.find_by_username(data.get('username')):
+            raise ValueError('Username already in use')
+        if self.user_repository.find_by_email(data.get('email')):
+            raise ValueError('Email already in use')
 
-    def update_user(self, data: dict[str, Any]) -> UserModel:
-        if not (user := UserModel.find_by_username(data['username'])):
-            raise ValueError(self.USER_NOT_FOUND_ERROR_MSG)
         hashed_password = bcrypt.generate_password_hash(data.pop('password'))
-        user.update(data | {'password': hashed_password})
-        return user
+        new_user = UserEntity(data, password=hashed_password)
+        self.user_repository.add(new_user)
+
+        return new_user
+
+    def update_user(self, data: dict[str, Any]) -> UserEntity:
+        result = self.user_repository.find_by_username(data.get('username'))
+        if not result:
+            raise ValueError('User not found')
+
+        hashed_password = bcrypt.generate_password_hash(data.pop('password'))
+        result.update(data | {'password': hashed_password})
+
+        return result
 
     def delete_user(self, username: str) -> int:
-        if not (user := UserModel.find_by_username(username)):
-            raise ValueError(self.USER_NOT_FOUND_ERROR_MSG)
-        user.delete()
-        return user.id
+        result = self.user_repository.find_by_username(username)
+        if not result:
+            raise ValueError('User not found')
+        self.user_repository.delete(result.id)
+        return result.id
 
-    def activate_user(self, username: str) -> UserModel:
-        if not (user := UserModel.find_by_username(username)):
-            raise ValueError(self.USER_NOT_FOUND_ERROR_MSG)
-        if user.is_active:
-            raise ValueError('User is already active')
-        user.update({'is_active': True})
-        return user
+    def get_user_by_name(self, username: str) -> UserEntity:
+        result = self.user_repository.find_by_username(username)
+        if not result:
+            raise ValueError('User not found')
+        return result
 
-    def check_login_credentials(self, username: str, password: str) -> UserModel:
-        if not (user := UserModel.find_by_username(username)):
-            raise ValueError(self.USER_NOT_FOUND_ERROR_MSG)
-        if not user.check_password(password):
-            raise ValueError('Incorrect password provided')
-        if not user.is_active:
+    def get_all_users(self) -> list[UserEntity]:
+        return self.user_repository.get_all()
+
+    def activate_user(self, username: str) -> UserEntity:
+        result = self.user_repository.find_by_username(username)
+        if not result:
+            raise ValueError('User not found')
+        if result.is_active:
+            raise ValueError('User was already activated')
+
+        result.is_active = True
+        self.user_repository.update(result)
+
+        return result
+
+    def check_login_credentials(self, username: str, password: str) -> UserEntity:
+        result = self.user_repository.find_by_username(username)
+        if not result:
+            raise ValueError('User not found')
+        if not bcrypt.check_password_hash(result.password, password):
+            raise ValueError('Incorrect password')
+        if not result.is_active:
             raise ValueError('User is not activated')
-        return user
+        return result
 
-    def get_user_by_name(self, username: str) -> UserModel:
-        if not (user := UserModel.find_by_username(username)):
-            raise ValueError(self.USER_NOT_FOUND_ERROR_MSG)
-        return user
+    def register_user(self, data: dict[str, Any]) -> UserEntity:
+        if self.user_repository.find_by_username(data.get('username')):
+            raise ValueError('Username already in use')
+        if self.user_repository.find_by_email(data.get('email')):
+            raise ValueError('Email already in use')
 
-    def get_all_users(self) -> list[UserModel]:
-        return UserModel.query.all()
-
-    def register_user(self, data: dict[str, Any]) -> UserModel:
-        if UserModel.find_by_username(data['username']) or UserModel.find_by_email(data['email']):
-            raise ValueError('User already exists')
         hashed_password = bcrypt.generate_password_hash(data.pop('password'))
-        user = UserModel(**data, password=hashed_password)
-        user.add()
+        user = UserEntity(**data, password=hashed_password)
+        self.user_repository.add(user)
         MailConfig.send_activation_mail(user.username, user.email)
+
         return user

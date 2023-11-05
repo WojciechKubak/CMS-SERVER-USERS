@@ -1,35 +1,30 @@
-from dataclasses import dataclass
-from typing import Type
 import os
 
 
-@dataclass
-class BaseConfig:
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'mysql://user:user1234@mysql:3307/db_1'
-    SQLALCHEMY_COMMIT_ON_TEARDOWN = True
-
-
-@dataclass
-class ProductionConfig(BaseConfig):
+class Config:
     TESTING = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI')
+    DATABASE_URI = 'mysql://user:user1234@mysql:3307/db_1'
 
 
-@dataclass
-class DevelopmentConfig(BaseConfig):
+class ProductionConfig(Config):
+    TESTING = False
+    DATABASE_URI = os.environ.get('DATABASE_URI')
+
+
+class DevelopmentConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
-@dataclass
-class TestingConfig(BaseConfig):
+class TestingConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = 'mysql://user:user1234@localhost:3308/db_test'
+    DATABASE_URI = 'mysql://user:user1234@localhost:3308/db_test'
 
 
-def get_config() -> Type[BaseConfig]:
-    return {
-        'production': ProductionConfig,
-        'development': DevelopmentConfig,
-        'testing': TestingConfig
-    }.get(os.environ.get('APP_CONFIG'), BaseConfig)
+def call_configuration() -> type[Config]:
+    match os.environ.get('APP_CONFIG', '').lower():
+        case 'production':
+            return ProductionConfig
+        case 'development':
+            return DevelopmentConfig
+        case _:
+            return Config
