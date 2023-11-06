@@ -1,9 +1,5 @@
-from users.routes.user import (
-    UserResource,
-    UserListResource,
-    UserRegisterResource,
-    UserActivationResource
-)
+from users.routes.user import UserIdResource, UserNameResource, UserListResource
+from users.routes.email import UserActivationResource, UserRegisterResource
 from users.security.configure_security import configure_security
 from users.email.configuration import MailConfig
 from users.web.configuration import app
@@ -78,7 +74,8 @@ def setup_routing(flask_app: Flask) -> None:
         return make_response({'message': 'Users home page'}, 200)
 
     api = Api(flask_app)
+    api.add_resource(UserIdResource, '/users/<int:id_>')
+    api.add_resource(UserNameResource, '/users/<string:username>')
     api.add_resource(UserListResource, '/users')
-    api.add_resource(UserResource, '/users/<string:username>')
     api.add_resource(UserActivationResource, '/users/activate')
-    api.add_resource(UserRegisterResource, '/register')
+    api.add_resource(UserRegisterResource, '/users/register')

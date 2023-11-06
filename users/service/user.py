@@ -17,7 +17,7 @@ class UserService:
             raise ValueError('Email already in use')
 
         hashed_password = bcrypt.generate_password_hash(data.pop('password'))
-        new_user = UserEntity(data, password=hashed_password)
+        new_user = UserEntity(**data, password=hashed_password)
         self.user_repository.add(new_user)
 
         return new_user
@@ -28,12 +28,13 @@ class UserService:
             raise ValueError('User not found')
 
         hashed_password = bcrypt.generate_password_hash(data.pop('password'))
-        result.update(data | {'password': hashed_password})
+        updated_user = UserEntity(**data, password=hashed_password)
+        self.user_repository.update(updated_user)
 
-        return result
+        return updated_user
 
-    def delete_user(self, username: str) -> int:
-        result = self.user_repository.find_by_username(username)
+    def delete_user(self, id_: str) -> int:
+        result = self.user_repository.find_by_id(id_)
         if not result:
             raise ValueError('User not found')
         self.user_repository.delete(result.id)
@@ -41,6 +42,18 @@ class UserService:
 
     def get_user_by_name(self, username: str) -> UserEntity:
         result = self.user_repository.find_by_username(username)
+        if not result:
+            raise ValueError('User not found')
+        return result
+
+    def get_user_by_email(self, email: str) -> UserEntity:
+        result = self.user_repository.find_by_email(email)
+        if not result:
+            raise ValueError('User not found')
+        return result
+
+    def get_user_by_id(self, id_: int) -> UserEntity:
+        result = self.user_repository.find_by_id(id_)
         if not result:
             raise ValueError('User not found')
         return result
