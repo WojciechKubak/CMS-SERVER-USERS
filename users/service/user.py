@@ -61,8 +61,8 @@ class UserService:
     def get_all_users(self) -> list[UserEntity]:
         return self.user_repository.get_all()
 
-    def activate_user(self, username: str) -> UserEntity:
-        result = self.user_repository.find_by_username(username)
+    def activate_user(self, id_: int) -> UserEntity:
+        result = self.user_repository.find_by_id(id_)
         if not result:
             raise ValueError('User not found')
         if result.is_active:
@@ -92,6 +92,6 @@ class UserService:
         hashed_password = bcrypt.generate_password_hash(data.pop('password'))
         user = UserEntity(**data, password=hashed_password)
         self.user_repository.add(user)
-        MailConfig.send_activation_mail(user.username, user.email)
+        MailConfig.send_activation_mail(user.id, user.email)
 
         return user
