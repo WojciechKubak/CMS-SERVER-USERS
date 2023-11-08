@@ -1,4 +1,5 @@
 from users.service.configuration import user_service
+from users.forms.login import LoginForm
 from flask import Flask, Response, request, make_response
 from flask_jwt_extended import (
     create_access_token,
@@ -13,8 +14,13 @@ def configure_security(app: Flask) -> None:
 
     @app.route("/login", methods=["POST"])
     def login() -> Response:
+        data = request.get_json()
+
+        form = LoginForm(data=data)
+        if not form.validate():
+            return make_response(form.errors, 400)
+
         try:
-            data = request.get_json()
             username, password = data.get('username'), data.get('password')
 
             if not username or not password:

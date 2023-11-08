@@ -1,4 +1,5 @@
 from users.service.configuration import user_service
+from users.forms.registration import RegistrationForm
 from flask import make_response, request, Response
 from flask_restful import Resource, reqparse
 from datetime import datetime
@@ -12,11 +13,14 @@ class UserRegisterResource(Resource):
 
     def post(self) -> Response:
         data = UserRegisterResource.parser.parse_args()
-        try:
-            user = user_service.register_user(data)
-            return make_response(user.to_json(), 201)
-        except ValueError as e:
-            return make_response({'message': e.args[0]}, 400)
+        form = RegistrationForm(data=data)
+        if form.validate():
+            try:
+                user = user_service.register_user(data)
+                return make_response(user.to_json(), 201)
+            except ValueError as e:
+                return make_response({'message': e.args[0]}, 400)
+        return make_response(form.errors, 400)
 
 
 class UserActivationResource(Resource):
