@@ -26,8 +26,7 @@ class UserActivationResource(Resource):
         if timestamp < datetime.utcnow().timestamp() * 1000:
             return make_response({'message': 'Activation link expired'}, 400)
         try:
-            user = user_service.get_user_by_name(request.args.get('username'))
-            user_service.activate_user(user.username)
+            user_service.activate_user(request.args.get('id'))
             return make_response({'message': 'User activated'}, 200)
         except ValueError as e:
             return make_response({'message': e.args[0]}, 400)

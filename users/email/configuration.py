@@ -18,11 +18,11 @@ class MailConfig:
         cls.template_env = template_env
 
     @classmethod
-    def send_activation_mail(cls: Self, username: str, email: str) -> None:
+    def send_activation_mail(cls: Self, id_: int, email: str) -> None:
         timestamp = datetime.utcnow().timestamp() * 1000 + int(os.getenv('REGISTER_TOKEN_LIFESPAN'))
-        activation_url = f'http://localhost/users/activate?username={username}&timestamp={timestamp}'
+        activation_url = f'http://localhost/users/activate?id={id_}&timestamp={timestamp}'
         template = cls.template_env.get_template('activation_mail.html')
-        html_body = template.render(username=username, activation_url=activation_url)
+        html_body = template.render(activation_url=activation_url)
 
         message = Message(
             subject='Activate your account',
