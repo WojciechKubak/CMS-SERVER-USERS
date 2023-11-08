@@ -36,7 +36,7 @@ def create_app() -> Flask:
         configure_security(app)
 
         setup_email_envs(app)
-        templates_env = Environment(loader=PackageLoader('users', 'templates'))
+        templates_env = Environment(loader=PackageLoader('users.email', 'templates'))
         MailConfig.prepare_mail(app, templates_env)
 
         setup_routing(app)
