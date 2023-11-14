@@ -1,4 +1,7 @@
+from dotenv import load_dotenv
 import os
+
+load_dotenv()
 
 
 class Config(object):
@@ -30,11 +33,26 @@ class TestingConfig(Config):
     SESSION_COOKIE_SECURE = False
 
 
-def get_configuration() -> type[Config]:
-    match os.environ.get('APP_CONFIG', '').lower():
-        case 'production':
-            return ProductionConfig
-        case 'development':
-            return DevelopmentConfig
-        case _:
-            return Config
+app_config = {
+        'production': ProductionConfig,
+        'development': DevelopmentConfig,
+        'testing': TestingConfig
+    }.get(os.environ.get('APP_CONFIG', '').lower(), Config)
+
+security_config = {
+        'JWT_COOKIE_SECURE': os.environ.get('JWT_COOKIE_SECURE'),
+        'JWT_TOKEN_LOCATION': [os.environ.get('JWT_TOKEN_LOCATION')],
+        'JWT_SECRET_KEY': os.environ.get('JWT_SECRET_KEY'),
+        'JWT_ACCESS_TOKEN_EXPIRES': int(os.environ.get('JWT_ACCESS_TOKEN_EXPIRES')),
+        'JWT_REFRESH_TOKEN_EXPIRES': int(os.environ.get('JWT_REFRESH_TOKEN_EXPIRES')),
+        'JWT_COOKIE_CSRF_PROTECT': os.environ.get('JWT_COOKIE_CSRF_PROTECT')
+    }
+
+mail_config = {
+        'MAIL_SERVER': os.environ.get('MAIL_SERVER'),
+        'MAIL_PORT': int(os.environ.get('MAIL_PORT')),
+        'MAIL_USE_SSL': os.environ.get('MAIL_USE_SSL'),
+        'MAIL_USE_TLS': os.environ.get('MAIL_USE_TLS'),
+        'MAIL_USERNAME': os.environ.get('MAIL_USERNAME'),
+        'MAIL_PASSWORD': os.environ.get('MAIL_PASSWORD')
+    }

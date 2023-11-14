@@ -162,5 +162,3 @@ cython_debug/
 # virtual env files
 Pipfile
 
-# additional flask config files
-*.toml
