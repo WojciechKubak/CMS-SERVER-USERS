@@ -68,3 +68,7 @@ class UserModel(sa.Model):
     @classmethod
     def find_by_email(cls, email: str) -> Self | None:
         return sa.session.query(UserModel).filter_by(email=email).first()
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any]) -> Self:
+        return UserModel(**data | {'password': bcrypt.generate_password_hash(data.get('password'))})

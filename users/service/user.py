@@ -1,5 +1,4 @@
 from users.email.configuration import MailConfig
-from users.security.configuration import bcrypt
 from users.db.model import UserModel
 from dataclasses import dataclass
 from typing import Any
@@ -13,9 +12,7 @@ class UserService:
             raise ValueError('Username already in use')
         if UserModel.find_by_email(data.get('email')):
             raise ValueError('Email already in use')
-
-        hashed_password = bcrypt.generate_password_hash(data.pop('password'))
-        user = UserModel(**data, password=hashed_password)
+        user = UserModel.from_json(data)
         user.add()
         return user
 
@@ -23,11 +20,8 @@ class UserService:
         result = UserModel.find_by_username(data.get('username'))
         if not result:
             raise ValueError('User not found')
-
-        hashed_password = bcrypt.generate_password_hash(data.pop('password'))
-        user = UserModel(**data, password=hashed_password)
+        user = UserModel.from_json(data)
         user.update()
-
         return user
 
     def delete_user(self, id_: str) -> int:
@@ -64,10 +58,7 @@ class UserService:
             raise ValueError('User not found')
         if result.is_active:
             raise ValueError('User was already activated')
-
-        result.is_active = True
-        UserModel.update(result)
-
+        result.set_active()
         return result
 
     def check_login_credentials(self, username: str, password: str) -> UserModel:
@@ -85,10 +76,7 @@ class UserService:
             raise ValueError('Username already in use')
         if UserModel.find_by_email(data.get('email')):
             raise ValueError('Email already in use')
-
-        hashed_password = bcrypt.generate_password_hash(data.pop('password'))
-        user = UserModel(**data, password=hashed_password)
+        user = UserModel.from_json(data)
         user.add()
         MailConfig.send_activation_mail(user.id, user.email)
-
         return user
