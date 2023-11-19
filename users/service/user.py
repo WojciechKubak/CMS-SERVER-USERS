@@ -20,7 +20,7 @@ class UserService:
         result = UserModel.find_by_username(data.get('username'))
         if not result:
             raise ValueError('User not found')
-        user = UserModel.from_json(data)
+        user = UserModel.from_json(result.to_json() | data)
         user.update()
         return user
 

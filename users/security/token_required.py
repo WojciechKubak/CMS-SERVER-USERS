@@ -1,3 +1,4 @@
+from users.service.configuration import user_service
 from users.web.configuration import app
 from flask_jwt_extended import verify_jwt_in_request, create_access_token, set_access_cookies, get_jwt_identity, get_jwt
 from flask_jwt_extended.exceptions import NoAuthorizationError, InvalidHeaderError
@@ -14,7 +15,9 @@ def jwt_required_with_roles(roles: list[str]) -> Callable:
         def decorated(*args: tuple[Any], **kwargs: dict[str, Any]):
             try:
                 verify_jwt_in_request()
-                if get_jwt().get('role').lower() in [role.lower() for role in roles]:
+                user_id = get_jwt().get('sub')
+                user_role = user_service.get_user_by_id(user_id).role.lower()
+                if user_role in roles:
                     return fn(*args, **kwargs)
                 else:
                     return make_response({'message': 'Insufficient permissions'}, 403)

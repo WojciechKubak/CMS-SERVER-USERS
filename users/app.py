@@ -1,12 +1,17 @@
-from users.routes.user import UserIdResource, UserNameResource, UserListResource
-from users.routes.email import UserActivationResource, UserRegisterResource
 from users.config import app_config, security_config, mail_config
 from users.security.configure_security import configure_security
+from users.security.configuration import jwt_manager, bcrypt
 from users.db.configuration import sa
 from users.email.configuration import MailConfig
 from users.web.configuration import app
+from users.routes.user import (
+    UserIdResource,
+    UserNameResource,
+    UserListResource,
+    UserRegisterResource,
+    UserActivationResource
+)
 from flask import Flask, Response, make_response
-from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from jinja2 import PackageLoader, Environment
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -28,8 +33,9 @@ def create_app() -> Flask:
         sa.init_app(app)
 
         app.config.update(security_config)
-        manager = JWTManager(app)
+        jwt_manager.init_app(app)
         configure_security(app)
+        bcrypt.init_app(app)
 
         app.config.update(mail_config)
         templates_env = Environment(loader=PackageLoader('users.email', 'templates'))

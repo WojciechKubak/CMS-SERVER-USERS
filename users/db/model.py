@@ -43,7 +43,8 @@ class UserModel(sa.Model):
         sa.session.commit()
 
     def update(self) -> None:
-        sa.session.merge(self)
+        updated = sa.session.merge(self)
+        sa.session.add(updated)
         sa.session.commit()
 
     def delete(self) -> None:

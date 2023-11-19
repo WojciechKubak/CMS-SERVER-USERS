@@ -1,5 +1,5 @@
 from users.service.configuration import user_service
-from users.forms.login import LoginForm
+from users.forms.user import LoginForm
 from flask import Flask, Response, request, make_response
 from flask_jwt_extended import (
     create_access_token,
@@ -12,7 +12,7 @@ from flask_jwt_extended import (
 
 def configure_security(app: Flask) -> None:
 
-    @app.route("/login", methods=["POST"])
+    @app.post('/login')
     def login() -> Response:
         data = request.get_json()
 
@@ -28,8 +28,8 @@ def configure_security(app: Flask) -> None:
 
             user = user_service.check_login_credentials(username, password)
 
-            access_token = create_access_token(identity=user.id, additional_claims={'role': user.role})
-            refresh_token = create_refresh_token(identity=user.id, additional_claims={'role': user.role})
+            access_token = create_access_token(identity=user.id)
+            refresh_token = create_refresh_token(identity=user.id)
 
             response = make_response({'message': "Login successful"})
             set_access_cookies(response, access_token)
@@ -39,7 +39,7 @@ def configure_security(app: Flask) -> None:
         except ValueError as e:
             return make_response({'message': e.args[0]}, 401)
 
-    @app.route("/logout", methods=["POST"])
+    @app.post('/logout')
     def logout() -> Response:
         response = make_response({'message': "Logout successful"})
         unset_jwt_cookies(response)

@@ -1,7 +1,9 @@
 from users.security.token_required import jwt_required_with_roles
 from users.service.configuration import user_service
-from flask import Response, make_response
+from users.forms.user import RegistrationForm
+from flask import Response, make_response, request
 from flask_restful import Resource, reqparse
+from datetime import datetime
 
 
 class UserIdResource(Resource):
@@ -42,8 +44,6 @@ class UserNameResource(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('email', type=str)
     parser.add_argument('password', type=str)
-    parser.add_argument('role', type=str)
-    parser.add_argument('is_active', type=bool)
 
     @jwt_required_with_roles(['user', 'redactor', 'translator', 'admin'])
     def get(self, username: str) -> Response:
@@ -57,7 +57,7 @@ class UserNameResource(Resource):
     def post(self, username: str) -> Response:
         data = UserNameResource.parser.parse_args()
         try:
-            user = user_service.add_user(data | {'username': username})
+            user = user_service.update_user(data | {'username': username})
             return make_response(user.to_json(), 201)
         except ValueError as e:
             return make_response({'message': e.args[0]}, 400)
@@ -65,7 +65,38 @@ class UserNameResource(Resource):
 
 class UserListResource(Resource):
 
-    @jwt_required_with_roles(['admin'])
+    @jwt_required_with_roles(['users'])
     def get(self) -> Response:
         users = user_service.get_all_users()
         return make_response({'users': [user.to_json() for user in users]}, 200)
+
+
+class UserRegisterResource(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('username', type=str)
+    parser.add_argument('email', type=str)
+    parser.add_argument('password', type=str)
+
+    def post(self) -> Response:
+        data = UserRegisterResource.parser.parse_args()
+        form = RegistrationForm(data=data)
+        if form.validate():
+            try:
+                user = user_service.register_user(data)
+                return make_response(user.to_json(), 201)
+            except ValueError as e:
+                return make_response({'message': e.args[0]}, 400)
+        return make_response(form.errors, 400)
+
+
+class UserActivationResource(Resource):
+
+    def get(self) -> Response:
+        timestamp = float(request.args.get('timestamp'))
+        if timestamp < datetime.utcnow().timestamp() * 1000:
+            return make_response({'message': 'Activation link expired'}, 400)
+        try:
+            user_service.activate_user(request.args.get('id'))
+            return make_response({'message': 'User activated'}, 200)
+        except ValueError as e:
+            return make_response({'message': e.args[0]}, 400)
