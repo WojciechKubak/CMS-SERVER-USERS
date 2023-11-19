@@ -11,6 +11,13 @@ from users.routes.user import (
     UserRegisterResource,
     UserActivationResource
 )
+from users.routes.comment import (
+    CommentIdResource,
+    AddCommentResource,
+    CommentContentResource,
+    CommentUserIdResource,
+    CommentArticleIdResource
+)
 from flask import Flask, Response, make_response
 from flask_restful import Api
 from jinja2 import PackageLoader, Environment
@@ -51,5 +58,11 @@ def create_app() -> Flask:
         api.add_resource(UserListResource, '/users')
         api.add_resource(UserActivationResource, '/users/activate')
         api.add_resource(UserRegisterResource, '/users/register')
+
+        api.add_resource(CommentIdResource, '/comments/<int:id_>')
+        api.add_resource(AddCommentResource, '/comments/')
+        api.add_resource(CommentContentResource, '/comments/<int:id_>')
+        api.add_resource(CommentUserIdResource, '/comments/user/<int:id_>')
+        api.add_resource(CommentArticleIdResource, '/comments/article/<int:id_>')
 
         return app

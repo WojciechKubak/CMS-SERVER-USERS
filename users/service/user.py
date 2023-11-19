@@ -1,5 +1,5 @@
 from users.email.configuration import MailConfig
-from users.db.model import UserModel
+from users.model.user import UserModel
 from dataclasses import dataclass
 from typing import Any
 
