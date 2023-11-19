@@ -2,6 +2,7 @@ from users.routes.user import UserIdResource, UserNameResource, UserListResource
 from users.routes.email import UserActivationResource, UserRegisterResource
 from users.config import app_config, security_config, mail_config
 from users.security.configure_security import configure_security
+from users.db.configuration import sa
 from users.email.configuration import MailConfig
 from users.web.configuration import app
 from flask import Flask, Response, make_response
@@ -23,6 +24,8 @@ def create_app() -> Flask:
         )
 
         app.config.from_object(app_config)
+
+        sa.init_app(app)
 
         app.config.update(security_config)
         manager = JWTManager(app)

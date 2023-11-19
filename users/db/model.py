@@ -1,15 +1,16 @@
+from users.security.configuration import bcrypt
 from sqlalchemy import Integer, String, Boolean, func, Enum
-from sqlalchemy.orm import Mapped, mapped_column, declarative_base
+from sqlalchemy.orm import Mapped, mapped_column
+from users.db.configuration import sa
 from typing import Literal, get_args
 from datetime import datetime
-from typing import Any
+from typing import Any, Self
 
-Base = declarative_base()
 
 UserRole = Literal['user', 'redactor', 'translator', 'admin']
 
 
-class UserEntity(Base):
+class UserModel(sa.Model):
     __tablename__ = 'users'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -36,3 +37,34 @@ class UserEntity(Base):
             'role': self.role,
             'is_active': self.is_active,
         }
+
+    def add(self) -> None:
+        sa.session.add(self)
+        sa.session.commit()
+
+    def update(self) -> None:
+        sa.session.merge(self)
+        sa.session.commit()
+
+    def delete(self) -> None:
+        sa.session.delete(self)
+        sa.session.commit()
+
+    def set_active(self) -> None:
+        self.is_active = True
+        sa.session.commit()
+
+    def check_password(self, password: str) -> None:
+        return bcrypt.check_password_hash(self.password, password)
+
+    @classmethod
+    def find_by_id(cls, id_: int) -> Self | None:
+        return sa.session.query(UserModel).filter_by(id=id_).first()
+
+    @classmethod
+    def find_by_username(cls, username: str) -> Self | None:
+        return sa.session.query(UserModel).filter_by(username=username).first()
+
+    @classmethod
+    def find_by_email(cls, email: str) -> Self | None:
+        return sa.session.query(UserModel).filter_by(email=email).first()
