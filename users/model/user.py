@@ -72,4 +72,5 @@ class UserModel(sa.Model):
 
     @classmethod
     def from_json(cls, data: dict[str, Any]) -> Self:
-        return UserModel(**data | {'password': bcrypt.generate_password_hash(data.get('password'))})
+        hashed_passowrd = bcrypt.generate_password_hash(data.get('password')).decode('utf8')
+        return UserModel(**data | {'password': hashed_passowrd})
