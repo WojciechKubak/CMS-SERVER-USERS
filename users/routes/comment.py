@@ -60,12 +60,18 @@ class CommentContentResource(Resource):
 class CommentUserIdResource(Resource):
 
     def get(self, id_: int) -> Response:
-        comments = comment_service.get_user_comments(id_)
-        return make_response([comment.to_json() for comment in comments], 200)
+        try:
+            comments = comment_service.get_user_comments(id_)
+            return make_response([comment.to_json() for comment in comments], 200)
+        except ValueError as e:
+            return make_response({'message': e.args[0]}, 400)
 
 
 class CommentArticleIdResource(Resource):
 
     def get(self, id_: int) -> Response:
-        comments = comment_service.get_article_comments(id_)
-        return make_response([comment.to_json() for comment in comments], 200)
+        try:
+            comments = comment_service.get_article_comments(id_)
+            return make_response([comment.to_json() for comment in comments], 200)
+        except ValueError as e:
+            return make_response({'message': e.args[0]}, 400)

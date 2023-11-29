@@ -9,7 +9,7 @@ class CommentService:
 
     def add_comment(self, data: dict[str, Any]) -> CommentModel:
         if not UserModel.find_by_id(data.get('user_id')):
-            raise ValueError('User not found.')
+            raise ValueError('User not found')
         comment = CommentModel.from_json(data)
         comment.add()
         return comment
@@ -38,6 +38,8 @@ class CommentService:
         return result
 
     def get_user_comments(self, user_id: int) -> list[CommentModel]:
+        if not UserModel.find_by_id(user_id):
+            raise ValueError('User not found')
         return CommentModel.query.filter_by(user_id=user_id).all()
 
     def get_article_comments(self, article_id: int) -> list[CommentModel]:
