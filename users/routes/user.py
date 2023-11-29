@@ -8,9 +8,9 @@ from datetime import datetime
 
 class UserIdResource(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('username', type=str)
-    parser.add_argument('email', type=str)
-    parser.add_argument('password', type=str)
+    parser.add_argument('username', type=str, required=True)
+    parser.add_argument('email', type=str, required=True)
+    parser.add_argument('password', type=str, required=True)
     parser.add_argument('role', type=str)
     parser.add_argument('is_active', type=bool)
 
@@ -27,7 +27,7 @@ class UserIdResource(Resource):
         data = UserIdResource.parser.parse_args()
         try:
             user = user_service.update_user(data | {'id': id_})
-            return make_response(user.to_json(), 201)
+            return make_response(user.to_json(), 200)
         except ValueError as e:
             return make_response({'message': e.args[0]}, 400)
 
@@ -53,19 +53,10 @@ class UserNameResource(Resource):
         except ValueError as e:
             return make_response({'message': e.args[0]}, 400)
 
-    @jwt_required_with_roles(['admin'])
-    def post(self, username: str) -> Response:
-        data = UserNameResource.parser.parse_args()
-        try:
-            user = user_service.update_user(data | {'username': username})
-            return make_response(user.to_json(), 201)
-        except ValueError as e:
-            return make_response({'message': e.args[0]}, 400)
-
 
 class UserListResource(Resource):
 
-    @jwt_required_with_roles(['users'])
+    @jwt_required_with_roles(['admin'])
     def get(self) -> Response:
         users = user_service.get_all_users()
         return make_response({'users': [user.to_json() for user in users]}, 200)
