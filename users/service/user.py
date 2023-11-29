@@ -17,10 +17,11 @@ class UserService:
         return user
 
     def update_user(self, data: dict[str, Any]) -> UserModel:
-        result = UserModel.find_by_username(data.get('username'))
+        result = UserModel.find_by_id(data.pop('id'))
         if not result:
             raise ValueError('User not found')
-        user = UserModel.from_json(result.to_json() | data)
+        filtered_data = {key: val for key, val in data.items() if val}
+        user = UserModel.from_json(result.to_json() | filtered_data)
         user.update()
         return user
 
