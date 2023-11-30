@@ -21,14 +21,14 @@ class CommentIdResource(Resource):
             return make_response({'message': e.args[0]}, 400)
 
 
-class AddCommentResource(Resource):
+class CommentResource(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('content', type=str)
     parser.add_argument('article_id', type=int)
     parser.add_argument('user_id', type=int)
 
     def post(self) -> Response:
-        data = AddCommentResource.parser.parse_args()
+        data = CommentResource.parser.parse_args()
         form = CommentForm(data=data)
         if form.validate():
             try:

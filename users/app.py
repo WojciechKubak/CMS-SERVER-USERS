@@ -13,7 +13,7 @@ from users.routes.user import (
 )
 from users.routes.comment import (
     CommentIdResource,
-    AddCommentResource,
+    CommentResource,
     CommentContentResource,
     CommentUserIdResource,
     CommentArticleIdResource
@@ -60,7 +60,7 @@ def create_app() -> Flask:
         api.add_resource(UserRegisterResource, '/users/register')
 
         api.add_resource(CommentIdResource, '/comments/<int:id_>')
-        api.add_resource(AddCommentResource, '/comments/')
+        api.add_resource(CommentResource, '/comments/')
         api.add_resource(CommentContentResource, '/comments/<int:id_>')
         api.add_resource(CommentUserIdResource, '/comments/user/<int:id_>')
         api.add_resource(CommentArticleIdResource, '/comments/article/<int:id_>')
