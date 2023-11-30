@@ -12,7 +12,6 @@ import pytest
 def app() -> Flask:
     app = Flask(__name__)
     app.config.from_object(app_config)
-
     yield app
 
 
@@ -50,21 +49,21 @@ def user_dto() -> dict[str, Any]:
 
 
 @pytest.fixture(scope='session')
-def user_model_data(user_dto: dict[str, Any]) -> dict[str, Any]:
-    return user_dto | {
-        'id': 1,
-        'role': 'user',
-        'is_active': False,
-        'password': bcrypt.generate_password_hash(user_dto['password'])
-    }
-
-
-@pytest.fixture(scope='session')
 def comment_dto(user_model_data: dict[str, Any]) -> dict[str, Any]:
     return {
         'content': 'dummy content',
         'article_id': 1,
         'user_id': user_model_data['id']
+    }
+
+
+@pytest.fixture(scope='session')
+def user_model_data(user_dto: dict[str, Any]) -> dict[str, Any]:
+    return user_dto | {
+        'id': 1,
+        'role': 'admin',
+        'is_active': False,
+        'password': bcrypt.generate_password_hash(user_dto['password']).decode('utf8')
     }
 
 

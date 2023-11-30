@@ -1,6 +1,6 @@
 from users.routes.comment import (
     CommentIdResource,
-    AddCommentResource,
+    CommentResource,
     CommentContentResource,
     CommentUserIdResource,
     CommentArticleIdResource
@@ -20,11 +20,11 @@ def add_comment(app: Flask, comment_model_data: dict[str, Any]) -> None:
 
 
 @pytest.fixture(autouse=True)
-def add_routing(app: Flask) -> Flask:
+def add_comment_routing(app: Flask) -> Flask:
     api = Api(app)
 
     api.add_resource(CommentIdResource, '/comments/<int:id_>')
-    api.add_resource(AddCommentResource, '/comments/')
+    api.add_resource(CommentResource, '/comments/')
     api.add_resource(CommentContentResource, '/comments/<int:id_>')
     api.add_resource(CommentUserIdResource, '/comments/user/<int:id_>')
     api.add_resource(CommentArticleIdResource, '/comments/article/<int:id_>')
