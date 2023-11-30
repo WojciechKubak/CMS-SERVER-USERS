@@ -2,6 +2,16 @@ from wtforms import Form, StringField, IntegerField, validators
 
 
 class CommentForm(Form):
+    """
+    CommentForm Class
+
+    This class defines a WTForms-based form for validating comment input.
+
+    Attributes:
+        content (StringField): A StringField for the comment content with data validation.
+        article_id (IntegerField): An IntegerField for the article ID with data validation.
+        user_id (IntegerField): An IntegerField for the user ID with data validation.
+    """
     content = StringField('Content', validators=[
         validators.DataRequired(),
         validators.Length(max=2000, message='Content must be no more than 2000 characters')

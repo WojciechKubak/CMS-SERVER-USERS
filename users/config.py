@@ -6,6 +6,7 @@ load_dotenv()
 
 
 class Config(object):
+    """Base configuration class with common settings for all environments."""
     TESTING = False
 
     SQLALCHEMY_TRACK_MODIFICATIONS = True
@@ -13,15 +14,18 @@ class Config(object):
 
 
 class ProductionConfig(Config):
+    """Production environment configuration."""
     SQLALCHEMY_DATABASE_URI = os.environ.get('PRODUCTION_DB_URI', '')
 
 
 class DevelopmentConfig(Config):
+    """Development environment configuration."""
     DEBUG = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 class TestingConfig(Config):
+    """Testing environment configuration."""
     TESTING = True
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
