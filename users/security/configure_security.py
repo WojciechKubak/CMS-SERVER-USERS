@@ -11,9 +11,24 @@ from flask_jwt_extended import (
 
 
 def configure_security(app: Flask) -> None:
+    """
+    Configure security-related endpoints and JWT authentication for the Flask app.
+
+    Args:
+        app (Flask): The Flask app to configure.
+
+    Returns:
+        None
+    """
 
     @app.post('/login')
     def login() -> Response:
+        """
+        Handle user login and issue JWT tokens.
+
+        Returns:
+            Response: A response indicating whether the login was successful or an error message.
+        """
         data = request.get_json()
 
         form = LoginForm(data=data)
@@ -41,6 +56,12 @@ def configure_security(app: Flask) -> None:
 
     @app.post('/logout')
     def logout() -> Response:
+        """
+        Handle user logout by unsetting JWT cookies.
+
+        Returns:
+            Response: A response indicating whether the logout was successful.
+        """
         response = make_response({'message': "Logout successful"})
         unset_jwt_cookies(response)
         return response

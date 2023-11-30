@@ -1,0 +1,379 @@
+{
+	"info": {
+		"_postman_id": "6dabce83-486a-4d0a-94ad-ba939e468929",
+		"name": "CMS-USERS-API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28704691"
+	},
+	"item": [
+		{
+			"name": "COMMENT",
+			"item": [
+				{
+					"name": "COMMENT_ID_RESOURCE",
+					"item": [
+						{
+							"name": "GET_COMMENT_BY_ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:80/comments/1",
+									"host": [
+										"localhost"
+									],
+									"port": "80",
+									"path": [
+										"comments",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE_COMMENT_BY_ID",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:80/comments/1",
+									"host": [
+										"localhost"
+									],
+									"port": "80",
+									"path": [
+										"comments",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "COMMENT_RESOURCE",
+					"item": [
+						{
+							"name": "ADD_COMMENT",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"content\": \"dummy_content\",\r\n    \"article_id\": 1,\r\n    \"user_id\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:80/comments",
+									"host": [
+										"localhost"
+									],
+									"port": "80",
+									"path": [
+										"comments"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "COMMENT_CONTENT_RESOURCE",
+					"item": [
+						{
+							"name": "UPDATE_COMMENT_CONTENT",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"content\": \"new_content\",\r\n    \"article_id\": 1,\r\n    \"user_id\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:80/comments/1",
+									"host": [
+										"localhost"
+									],
+									"port": "80",
+									"path": [
+										"comments",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "COMMENT_USER_ID_RESOURCE",
+					"item": [
+						{
+							"name": "GET_USER_ID_COMMENTS",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:80/comments/user/1",
+									"host": [
+										"localhost"
+									],
+									"port": "80",
+									"path": [
+										"comments",
+										"user",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "COMMENT_ARTICLE_ID_RESOURCE",
+					"item": [
+						{
+							"name": "GET_ARTICLE_ID_COMMENTS",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:80/comments/article/1",
+									"host": [
+										"localhost"
+									],
+									"port": "80",
+									"path": [
+										"comments",
+										"article",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "USER",
+			"item": [
+				{
+					"name": "USER_ID_RESOURCE",
+					"item": [
+						{
+							"name": "GET_USER_BY_ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:80/users/1",
+									"host": [
+										"localhost"
+									],
+									"port": "80",
+									"path": [
+										"users",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUT_USER_BY_ID",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"User\",\r\n    \"email\": \"new_user@example.com\",\r\n    \"password\": \"password\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:80/users/1",
+									"host": [
+										"localhost"
+									],
+									"port": "80",
+									"path": [
+										"users",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE_USER_BY_ID",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:80/users/1",
+									"host": [
+										"localhost"
+									],
+									"port": "80",
+									"path": [
+										"users",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "USER_USERNAME_RESOURCE",
+					"item": [
+						{
+							"name": "GET_USER_BY_NAME",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:80/users/User",
+									"host": [
+										"localhost"
+									],
+									"port": "80",
+									"path": [
+										"users",
+										"User"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "USER_LIST_RESOURCE",
+					"item": [
+						{
+							"name": "GET_ALL_USERS",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:80/users",
+									"host": [
+										"localhost"
+									],
+									"port": "80",
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "USER_REGISTER_RESOURCE",
+					"item": [
+						{
+							"name": "REGISTER_USER",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"User\",\r\n    \"password\": \"password\",\r\n    \"email\": \"user@example.com\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:80/users/register",
+									"host": [
+										"localhost"
+									],
+									"port": "80",
+									"path": [
+										"users",
+										"register"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "SECURITY",
+			"item": [
+				{
+					"name": "LOGIN",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"User\",\r\n    \"password\": \"password\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:80/login",
+							"host": [
+								"localhost"
+							],
+							"port": "80",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LOGOUT",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:80/logout",
+							"host": [
+								"localhost"
+							],
+							"port": "80",
+							"path": [
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
